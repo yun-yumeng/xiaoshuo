@@ -1,0 +1,65 @@
+{
+  "updated": "2026-10-08",
+  "files": [
+    {
+      "name": "山雨来时-封面.svg",
+      "type": "image",
+      "url": "assets/img/cover-shanyu.svg",
+      "thumb": "assets/img/cover-shanyu.svg",
+      "size": 2127,
+      "date": "2026-10-08",
+      "desc": "小说封面竖版 3:4"
+    },
+    {
+      "name": "渡口-插图.svg",
+      "type": "image",
+      "url": "assets/img/g1.svg",
+      "thumb": "assets/img/g1.svg",
+      "size": 1578,
+      "date": "2026-09-28",
+      "desc": "第一章配图：江面与远山"
+    },
+    {
+      "name": "旧信-插图.svg",
+      "type": "image",
+      "url": "assets/img/g2.svg",
+      "thumb": "assets/img/g2.svg",
+      "size": 1334,
+      "date": "2026-10-02",
+      "desc": "第二章配图：雨中的屋檐"
+    },
+    {
+      "name": "灯下-插图.svg",
+      "type": "image",
+      "url": "assets/img/g3.svg",
+      "thumb": "assets/img/g3.svg",
+      "size": 1911,
+      "date": "2026-10-08",
+      "desc": "第三章配图：夜航的灯"
+    },
+    {
+      "name": "仓储监测-样例数据.csv",
+      "type": "doc",
+      "url": "files/仓储监测-样例数据.csv",
+      "size": 1954,
+      "date": "2026-10-05",
+      "desc": "温湿度传感器采样示例，含 7 天时序"
+    },
+    {
+      "name": "论文图表素材包.zip",
+      "type": "archive",
+      "url": "files/论文图表素材包.zip",
+      "size": 3006,
+      "date": "2026-10-01",
+      "desc": "系统架构图与实验对比图源文件"
+    },
+    {
+      "name": "阅读笔记模板.md",
+      "type": "doc",
+      "url": "files/阅读笔记模板.md",
+      "size": 265,
+      "date": "2026-09-20",
+      "desc": "章节摘录 + 感想两段式模板"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800" role="img" aria-label="山雨来时 封面">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8ded1"/>
+      <stop offset="45%" stop-color="#d9c9b4"/>
+      <stop offset="100%" stop-color="#b79f86"/>
+    </linearGradient>
+    <linearGradient id="far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8d8577"/>
+      <stop offset="100%" stop-color="#a2977f"/>
+    </linearGradient>
+    <linearGradient id="near" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5c5348"/>
+      <stop offset="100%" stop-color="#423c34"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#fdf3e0"/>
+      <stop offset="100%" stop-color="#fdf3e0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="600" height="800" fill="url(#sky)"/>
+  <circle cx="430" cy="230" r="150" fill="url(#sun)"/>
+  <circle cx="430" cy="230" r="42" fill="#f7ead2"/>
+
+  <path d="M0 470 L90 392 L150 430 L235 340 L320 430 L400 372 L470 420 L600 350 L600 800 L0 800 Z" fill="url(#far)" opacity="0.85"/>
+  <path d="M0 560 L110 486 L200 536 L300 470 L390 530 L480 492 L600 545 L600 800 L0 800 Z" fill="url(#near)"/>
+
+  <g opacity="0.5" stroke="#f3ece0" stroke-width="2" fill="none">
+    <path d="M40 640 q60 -14 120 0 t120 0 t120 0 t120 0"/>
+    <path d="M20 690 q70 -16 140 0 t140 0 t140 0 t140 0"/>
+    <path d="M60 740 q60 -14 120 0 t120 0 t120 0 t120 0"/>
+  </g>
+
+  <rect x="0" y="0" width="600" height="800" fill="none" stroke="#3b342c" stroke-opacity="0.25" stroke-width="16"/>
+
+  <text x="60" y="150" font-family="Georgia, 'Songti SC', serif" font-size="58" fill="#3b342c" letter-spacing="6">山雨来时</text>
+  <text x="62" y="192" font-family="Georgia, 'Songti SC', serif" font-size="18" fill="#5c5348" letter-spacing="3">等雾散了，路就清楚了</text>
+  <text x="62" y="756" font-family="Georgia, 'Songti SC', serif" font-size="15" fill="#efe6d8" letter-spacing="2">佚名 · 连载中</text>
+</svg>

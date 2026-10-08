@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="雨中的屋檐">
+  <defs>
+    <linearGradient id="s2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9fa8ad"/>
+      <stop offset="100%" stop-color="#6f757a"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#s2)"/>
+
+  <g opacity="0.55" stroke="#dfe6ea" stroke-width="1.6">
+    <path d="M60 0 L40 600"/><path d="M140 0 L120 600"/><path d="M220 0 L200 600"/>
+    <path d="M300 0 L280 600"/><path d="M380 0 L360 600"/><path d="M460 0 L440 600"/>
+    <path d="M540 0 L520 600"/><path d="M620 0 L600 600"/><path d="M700 0 L680 600"/>
+    <path d="M770 0 L750 600"/>
+  </g>
+
+  <path d="M0 210 L400 130 L800 210 L800 250 L400 175 L0 250 Z" fill="#3d4348"/>
+  <path d="M0 250 L400 175 L800 250 L800 268 L0 268 Z" fill="#2c3135"/>
+  <rect y="268" width="800" height="20" fill="#4a5157"/>
+
+  <rect x="250" y="300" width="300" height="300" fill="#5a6066"/>
+  <rect x="330" y="360" width="140" height="120" fill="#f3e6c8" opacity="0.85"/>
+  <g stroke="#4a5157" stroke-width="6">
+    <path d="M400 360 L400 480"/><path d="M330 420 L470 420"/>
+  </g>
+  <rect x="292" y="500" width="216" height="100" fill="#6b7178"/>
+  <circle cx="640" cy="470" r="34" fill="#33383d" opacity="0.7"/>
+</svg>

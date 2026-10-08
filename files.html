@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文件 · 不是贱贱的私密小窝</title>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <a class="brand" href="index.html"><span class="dot"></span>不是贱贱的私密小窝</a>
+    <a class="link" href="novel.html">小说</a>
+    <a class="link" href="files.html">文件</a>
+    <a class="link" href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+    <button class="icon-btn" data-theme-toggle title="切换明暗主题">☾</button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="files-head">
+    <h1>文件</h1>
+    <p class="muted">文档、素材、图片，按需取用。大文件建议右键另存。</p>
+  </section>
+
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="搜索文件名或说明…">
+    <div id="chips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+  </div>
+
+  <section class="grid" id="grid"></section>
+
+  <section class="block" id="gallery">
+    <div class="block-head"><h2>图片</h2></div>
+    <div class="gallery" id="gal"></div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="inner">
+    <span>© <span data-year>2026</span> 不是贱贱的私密小窝</span>
+    <span>文件随仓库版本更新</span>
+  </div>
+</footer>
+
+<script src="assets/js/app.js"></script>
+<script>
+var ICONS = {
+  image: '🖼', archive: '🗜', doc: '📄', code: '⌨', audio: '🎵', video: '🎬', other: '📦'
+};
+var all = [], active = 'all';
+
+loadJSON('content/files.json').then(function (data) {
+  all = data.files || [];
+  var types = ['all'].concat(Array.from(new Set(all.map(function (f) { return f.type; }))));
+  var LABEL = { all: '全部', image: '图片', archive: '压缩包', doc: '文档', code: '代码', audio: '音频', video: '视频', other: '其它' };
+
+  document.getElementById('chips').innerHTML = types.map(function (t) {
+    return '<button class="chip' + (t === 'all' ? ' on' : '') + '" data-t="' + t + '">' +
+      (LABEL[t] || t) + '</button>';
+  }).join('');
+
+  document.getElementById('chips').addEventListener('click', function (e) {
+    var c = e.target.closest('.chip'); if (!c) return;
+    active = c.dataset.t;
+    document.querySelectorAll('.chip').forEach(function (x) { x.classList.toggle('on', x === c); });
+    draw();
+  });
+  document.getElementById('q').addEventListener('input', draw);
+  draw();
+});
+
+function draw() {
+  var kw = document.getElementById('q').value.trim().toLowerCase();
+  var list = all.filter(function (f) {
+    if (active !== 'all' && f.type !== active) return false;
+    if (!kw) return true;
+    return (f.name + ' ' + (f.desc || '')).toLowerCase().indexOf(kw) > -1;
+  });
+
+  var nonImg = list.filter(function (f) { return f.type !== 'image'; });
+  document.getElementById('grid').innerHTML = nonImg.map(function (f) {
+    return '<div class="fcard">' +
+      '<div class="thumb">' + (ICONS[f.type] || ICONS.other) + '</div>' +
+      '<div class="body">' +
+        '<div class="name">' + escHtml(f.name) + '</div>' +
+        '<div class="desc">' + escHtml(f.desc || '') + '</div>' +
+        '<div class="foot"><span>' + (f.size ? fmtSize(f.size) : '') + (f.date ? ' · ' + f.date : '') + '</span>' +
+        '<a class="dl" href="' + f.url + '" download>下载</a></div>' +
+      '</div></div>';
+  }).join('') || '<div class="empty">没有匹配的文件。</div>';
+
+  document.getElementById('gal').innerHTML = list.filter(function (f) { return f.type === 'image'; }).map(function (f) {
+    return '<figure><img src="' + (f.thumb || f.url) + '" alt="' + escHtml(f.name) + '" data-zoom loading="lazy">' +
+      '<figcaption>' + escHtml(f.name) + '</figcaption></figure>';
+  }).join('');
+}
+</script>
+</body>
+</html>

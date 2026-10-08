@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小说 · 不是贱贱的私密小窝</title>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <a class="brand" href="index.html"><span class="dot"></span>不是贱贱的私密小窝</a>
+    <a class="link" href="novel.html">小说</a>
+    <a class="link" href="files.html">文件</a>
+    <a class="link" href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+    <button class="icon-btn" data-theme-toggle title="切换明暗主题">☾</button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <div class="reader">
+    <aside class="toc" id="toc"><div class="empty">加载中…</div></aside>
+
+    <div>
+      <article class="article">
+        <div class="article-head">
+          <h1 id="ch-title">…</h1>
+          <div class="meta" id="ch-meta"></div>
+        </div>
+        <div class="prose" id="ch-body"><p class="muted">加载中…</p></div>
+
+        <div class="tools">
+          <button class="icon-btn" id="fs-down" title="缩小字号">A-</button>
+          <button class="icon-btn" id="fs-up" title="放大字号">A+</button>
+          <span class="small muted">字号与主题会被记住</span>
+        </div>
+
+        <div class="pager" id="pager"></div>
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="inner">
+    <span>© <span data-year>2026</span> 不是贱贱的私密小窝</span>
+    <span>Markdown 写作，Push 即发布</span>
+  </div>
+</footer>
+
+<script src="assets/js/app.js"></script>
+<script src="assets/js/markdown.js"></script>
+<script>
+var FS_KEY = 'reader-fontsize';
+
+function setFontSize(px) {
+  document.getElementById('ch-body').style.setProperty('--fsize', px + 'px');
+  try { localStorage.setItem(FS_KEY, px); } catch (e) {}
+}
+var savedFs = 17;
+try { savedFs = parseInt(localStorage.getItem(FS_KEY), 10) || 17; } catch (e) {}
+
+document.getElementById('fs-up').onclick = function () { setFontSize(Math.min(savedFs + 1, 24)); savedFs = Math.min(savedFs + 1, 24); };
+document.getElementById('fs-down').onclick = function () { setFontSize(Math.max(savedFs - 1, 14)); savedFs = Math.max(savedFs - 1, 14); };
+
+var book, chapters = [];
+
+loadJSON('content/novels.json').then(function (data) {
+  var novels = data.novels || [];
+  if (!novels.length) { document.getElementById('toc').innerHTML = '<div class="empty">还没有作品。</div>'; return; }
+
+  book = novels.filter(function (b) { return b.slug === qs('book'); })[0] || novels[0];
+  chapters = book.chapters || [];
+
+  // 目录
+  document.getElementById('toc').innerHTML =
+    '<h4>' + escHtml(book.title) + '</h4>' +
+    '<div class="book-meta">' + escHtml(book.author || '') + (book.desc ? ' · ' + escHtml(book.desc) : '') + '</div>' +
+    '<ol>' + chapters.map(function (c) {
+      return '<li><a href="novel.html?book=' + book.slug + '&ch=' + c.id + '" data-ch="' + c.id + '">' +
+        escHtml(c.title) + '</a></li>';
+    }).join('') + '</ol>';
+
+  loadChapter(qs('ch') || (chapters[0] && chapters[0].id));
+});
+
+function loadChapter(id) {
+  var ch = chapters.filter(function (c) { return c.id === id; })[0] || chapters[0];
+  if (!ch) { document.getElementById('ch-body').innerHTML = '<p class="muted">暂无章节。</p>'; return; }
+
+  document.title = ch.title + ' · ' + book.title + ' · 不是贱贱的私密小窝';
+  document.getElementById('ch-title').textContent = ch.title;
+  document.getElementById('ch-meta').textContent =
+    [book.title, book.author, ch.date, ch.words ? ch.words + ' 字' : ''].filter(Boolean).join(' · ');
+
+  document.querySelectorAll('#toc a').forEach(function (a) {
+    a.classList.toggle('on', a.dataset.ch === ch.id);
+  });
+
+  // 上下章
+  var idx = chapters.indexOf(ch);
+  var prev = chapters[idx - 1], next = chapters[idx + 1];
+  function link(c, dir, label) {
+    if (!c) return '<a class="disabled" href="#"><span class="dir">' + dir + '</span>' + label + '</a>';
+    return '<a href="novel.html?book=' + book.slug + '&ch=' + c.id + '"><span class="dir">' + dir + '</span>' + escHtml(c.title) + '</a>';
+  }
+  document.getElementById('pager').innerHTML =
+    link(prev, '上一章', '没有了') + link(next, '下一章', '没有了');
+
+  // 正文：按类型渲染（md / txt / 图片 / Word）
+  var kind = ch.kind || extKind(ch.file);
+
+  function afterRender() {
+    setFontSize(savedFs);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  if (kind === 'image') {
+    document.getElementById('ch-body').innerHTML =
+      '<img class="ch-media" src="content/' + ch.file + '" alt="' + escHtml(ch.title) + '" data-zoom>';
+    afterRender();
+  } else if (kind === 'doc' || kind === 'docx') {
+    var abs = location.origin + '/content/' + ch.file;
+    document.getElementById('ch-body').innerHTML =
+      '<div class="ch-word">' +
+      '<p class="muted">Word 文档（' + (ch.kind || extKind(ch.file)).toUpperCase() +
+      '），下方可在浏览器中直接预览，或下载查看（部署到 Cloudflare/GitHub 后预览更稳）。</p>' +
+      '<iframe class="ch-frame" src="https://view.officeapps.live.com/op/embed.aspx?src=' +
+      encodeURIComponent(abs) + '" loading="lazy"></iframe>' +
+      '<p><a class="btn ghost" href="content/' + ch.file + '" download>下载文档</a></p></div>';
+    afterRender();
+  } else {
+    loadText('content/' + ch.file).then(function (txt) {
+      var html = kind === 'txt'
+        ? '<pre class="ch-txt">' + escHtml(txt) + '</pre>'
+        : md.render(txt);
+      document.getElementById('ch-body').innerHTML = html;
+      afterRender();
+    }).catch(function (err) {
+      document.getElementById('ch-body').innerHTML =
+        '<p class="muted">章节加载失败：' + escHtml(err.message) + '</p>';
+    });
+  }
+}
+
+function extKind(f) {
+  var e = (f.split('.').pop() || '').toLowerCase();
+  return ({
+    png: 'image', jpg: 'image', jpeg: 'image', gif: 'image',
+    svg: 'image', webp: 'image', bmp: 'image',
+    txt: 'txt', md: 'md', doc: 'doc', docx: 'docx'
+  })[e] || 'md';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>不是贱贱的私密小窝 — 小说与文件共享</title>
+<meta name="description" content="一个安静的小站：读小说章节，下载共享文件。">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <a class="brand" href="index.html"><span class="dot"></span>不是贱贱的私密小窝</a>
+    <a class="link" href="novel.html">小说</a>
+    <a class="link" href="files.html">文件</a>
+    <a class="link" href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+    <button class="icon-btn" data-theme-toggle title="切换明暗主题">☾</button>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <h1>读几章字，取一份文件。</h1>
+    <p class="lead">这里存放我正在写的故事，以及一些愿意共享的资料。没有登录，没有广告，打开就能看。</p>
+    <a class="btn" href="novel.html">开始阅读 →</a>
+    <a class="btn ghost" href="files.html">浏览文件</a>
+  </section>
+
+  <section class="cards">
+    <a class="card" href="novel.html">
+      <span class="emo">📖</span>
+      <h3>小说章节</h3>
+      <p>按卷章排版，支持字号与明暗主题切换。</p>
+    </a>
+    <a class="card" href="files.html">
+      <span class="emo">📦</span>
+      <h3>文件共享</h3>
+      <p>文档、压缩包、图片，直接下载。</p>
+    </a>
+    <a class="card" href="files.html#gallery">
+      <span class="emo">🖼</span>
+      <h3>图片</h3>
+      <p>缩略图预览，点击放大查看原图。</p>
+    </a>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2>最近更新</h2>
+      <a href="novel.html">全部章节 →</a>
+    </div>
+    <div class="list" id="latest-chapters"><div class="empty">加载中…</div></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2>最新文件</h2>
+      <a href="files.html">全部文件 →</a>
+    </div>
+    <div class="list" id="latest-files"><div class="empty">加载中…</div></div>
+  </section>
+
+  <section class="block" id="gallery">
+    <div class="block-head">
+      <h2>图片</h2>
+      <a href="files.html">查看全部 →</a>
+    </div>
+    <div class="gallery" id="home-gallery"></div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="inner">
+    <span>© <span data-year>2026</span> 不是贱贱的私密小窝 · 内容与源码同步于 GitHub，站点托管在 Cloudflare</span>
+    <span>无追踪 · 无广告</span>
+  </div>
+</footer>
+
+<script src="assets/js/app.js"></script>
+<script>
+Promise.all([loadJSON('content/novels.json'), loadJSON('content/files.json')])
+  .then(function (res) {
+    var novels = res[0].novels || [], files = res[1].files || [];
+
+    // 最近章节
+    var chapters = [];
+    novels.forEach(function (book) {
+      (book.chapters || []).forEach(function (ch) {
+        chapters.push({ book: book.slug, bookTitle: book.title, id: ch.id, title: ch.title, date: ch.date, file: 'content/' + ch.file });
+      });
+    });
+    chapters.sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
+    var top = chapters.slice(0, 5);
+    var box = document.getElementById('latest-chapters');
+    box.innerHTML = top.map(function (c) {
+      return '<a class="row" href="novel.html?book=' + c.book + '&ch=' + c.id + '">' +
+        '<div class="grow"><div class="t">' + escHtml(c.title) + '</div>' +
+        '<div class="d">' + escHtml(c.bookTitle) + '</div></div>' +
+        '<span class="tag">' + escHtml(c.date || '') + '</span></a>';
+    }).join('') || '<div class="empty">还没有章节。</div>';
+
+    // 给第一条 markdown 章节拉一段预览（txt/图片类不拉取）
+    var firstMd = top.filter(function (c) { return /\.md$/i.test(c.file); })[0];
+    if (firstMd) {
+      loadText(firstMd.file).then(function (t) {
+        var text = t.replace(/[#>*`\-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 46);
+        var d = box.querySelector('a.row .d');
+        if (d) d.textContent = d.textContent + ' — ' + text + '…';
+      }).catch(function () {});
+    }
+
+    // 最新文件
+    var fb = document.getElementById('latest-files');
+    fb.innerHTML = files.slice(0, 4).map(function (f) {
+      return '<a class="row" href="' + f.url + '" download>' +
+        '<div class="grow"><div class="t">' + escHtml(f.name) + '</div>' +
+        '<div class="d">' + escHtml(f.desc || '') + '</div></div>' +
+        '<span class="tag">' + (f.size ? fmtSize(f.size) : escHtml(f.type)) + '</span></a>';
+    }).join('') || '<div class="empty">还没有文件。</div>';
+
+    // 图片
+    var imgs = files.filter(function (f) { return f.type === 'image' && f.thumb; }).slice(0, 4);
+    document.getElementById('home-gallery').innerHTML = imgs.map(function (f) {
+      return '<figure><img src="' + f.thumb + '" alt="' + escHtml(f.name) + '" data-zoom loading="lazy">' +
+        '<figcaption>' + escHtml(f.name) + '</figcaption></figure>';
+    }).join('');
+  })
+  .catch(function (err) {
+    document.getElementById('latest-chapters').innerHTML =
+      '<div class="empty">内容加载失败：' + escHtml(err.message) + '</div>';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "novels": [
+    {
+      "slug": "shanyu",
+      "title": "山雨来时",
+      "author": "佚名",
+      "desc": "连载中",
+      "cover": "assets/img/cover-shanyu.svg",
+      "chapters": [
+        { "id": "001", "title": "第一章 · 渡口", "file": "chapters/shanyu/001.md", "date": "2026-09-28", "words": 860 },
+        { "id": "002", "title": "第二章 · 旧信", "file": "chapters/shanyu/002.md", "date": "2026-10-02", "words": 920 },
+        { "id": "003", "title": "第三章 · 灯下", "file": "chapters/shanyu/003.md", "date": "2026-10-08", "words": 1040 },
+        { "id": "004", "title": "番外 · 草稿（TXT）", "file": "chapters/shanyu/004.txt", "kind": "txt", "date": "2026-10-08" }
+      ]
+    }
+  ]
+}
